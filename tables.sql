@@ -86,6 +86,18 @@ CREATE TABLE contains_badge(
     FOREIGN KEY(product_id) REFERENCES products(id) ON DELETE CASCADE
 );
 
+SET @path = 'C:\Users\asus\Desktop\codes\database';
+-- Load data from users.csv
+LOAD DATA LOCAL INFILE 'C:/Users/asus/Desktop/codes/database/users.csv'
+INTO TABLE users
+FIELDS TERMINATED BY ','
+ENCLOSED BY '"'
+LINES TERMINATED BY '\n'
+IGNORE 1 ROWS;
 
-
-
+ALTER TABLE categories
+DROP FOREIGN KEY categories_ibfk_1,  -- Drop existing foreign key constraint
+ADD CONSTRAINT fk_parent_category  -- Add new foreign key constraint
+FOREIGN KEY (parent_id)
+REFERENCES categories(id)
+ON DELETE SET NULL;  -- Set the behavior to set null on delete

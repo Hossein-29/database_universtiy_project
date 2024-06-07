@@ -34,7 +34,7 @@ DELIMITER ','
 CSV HEADER;
 
 COPY badges
-FROM '/Users/hosseinb/projects/database_universtiy_project/divar_bages.csv'
+FROM '/Users/hosseinb/projects/database_universtiy_project/divar_badges.csv'
 DELIMITER ','
 CSV HEADER;
 

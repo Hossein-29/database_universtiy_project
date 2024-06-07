@@ -54,7 +54,7 @@ CREATE TABLE categories(
     parent_id INTEGER,
     FOREIGN KEY(parent_id) REFERENCES categories(id) ON DELETE SET NULL
 );
-ALTER TABLE categories DROP CONSTRAINT categories_parent_id_fkey;
+
 
 
 CREATE TABLE products(

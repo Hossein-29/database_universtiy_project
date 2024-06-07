@@ -2,19 +2,28 @@
 -- cd directory_of_this_file
 -- psql -d database_name < tables.sql
 
-
+DROP TABLE IF EXISTS contains_badge;
+DROP TABLE IF EXISTS badges;
+DROP TABLE IF EXISTS comments;
+DROP TABLE IF EXISTS products;
+DROP TABLE IF EXISTS categories;
+DROP TABLE IF EXISTS payments;
+DROP TABLE IF EXISTS wallets;
+DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS admins;
+
+
 CREATE TABLE admins(
-    id INT Auto_Increment PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     first_name VARCHAR(50),
     last_name VARCHAR(50),
     username VARCHAR(50),
     access_level INTEGER
 );
 
-DROP TABLE IF EXISTS users;
+
 CREATE TABLE users(
-    id INT Auto_Increment PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     first_name VARCHAR(50),
     last_name VARCHAR(50),
     province VARCHAR(50),
@@ -23,31 +32,33 @@ CREATE TABLE users(
     phone VARCHAR(50)
 );
 
-DROP TABLE IF EXISTS wallets;
+
 CREATE TABLE wallets(
-    id INT Auto_Increment PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     amount INT DEFAULT 0,
     FOREIGN KEY(id) REFERENCES users(id) ON DELETE CASCADE
 );
 
-DROP TABLE IF EXISTS payments;
+
 CREATE TABLE payments(
-    id INT Auto_Increment PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     amount INTEGER,
     user_id INTEGER,
     FOREIGN KEY(user_id) REFERENCES users(id)
 );
-DROP TABLE IF EXISTS categories;
+
+
 CREATE TABLE categories(
-    id INT Auto_Increment PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     name VARCHAR(50) NOT NULL,
     parent_id INTEGER,
     FOREIGN KEY(parent_id) REFERENCES categories(id) ON DELETE SET NULL
 );
+ALTER TABLE categories DROP CONSTRAINT categories_parent_id_fkey;
 
-DROP TABLE IF EXISTS products;
+
 CREATE TABLE products(
-    id INT Auto_Increment PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     title VARCHAR(50) NOT NULL,
     category_id INT,
     city VARCHAR(50),
@@ -59,9 +70,9 @@ CREATE TABLE products(
     FOREIGN KEY(user_id) REFERENCES  users(id) ON DELETE CASCADE
 );
 
-DROP TABLE IF EXISTS comments;
+
 CREATE TABLE comments(
-    id INT Auto_Increment PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     user_id INTEGER NULL,
     product_id INTEGER NOT NULL,
     sent_at TIMESTAMP DEFAULT NOW(),
@@ -70,34 +81,18 @@ CREATE TABLE comments(
     FOREIGN KEY(product_id) REFERENCES products(id) ON DELETE CASCADE
 );
 
-DROP TABLE IF EXISTS badges;
+
 CREATE TABLE badges(
-    id INT Auto_Increment PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     name VARCHAR(20) NOT NULL,
     weight INT NOT NULL,
     price INTEGER NOT NULL
 );
 
-DROP TABLE IF EXISTS contains_badge;
+
 CREATE TABLE contains_badge(
     badge_id INT,
     product_id INT,
     FOREIGN KEY(badge_id) REFERENCES badges(id) ON DELETE CASCADE,
     FOREIGN KEY(product_id) REFERENCES products(id) ON DELETE CASCADE
 );
-
-SET @path = 'C:\Users\asus\Desktop\codes\database';
--- Load data from users.csv
-LOAD DATA LOCAL INFILE 'C:/Users/asus/Desktop/codes/database/users.csv'
-INTO TABLE users
-FIELDS TERMINATED BY ','
-ENCLOSED BY '"'
-LINES TERMINATED BY '\n'
-IGNORE 1 ROWS;
-
-ALTER TABLE categories
-DROP FOREIGN KEY categories_ibfk_1,  -- Drop existing foreign key constraint
-ADD CONSTRAINT fk_parent_category  -- Add new foreign key constraint
-FOREIGN KEY (parent_id)
-REFERENCES categories(id)
-ON DELETE SET NULL;  -- Set the behavior to set null on delete
